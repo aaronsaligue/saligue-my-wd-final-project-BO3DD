@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHAUN SHOES | Premium Footwear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #0f172a;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: var(--dark); line-height: 1.6; }
+
+        /* Header & Nav */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(255,255,255,0.95); position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(10px); border-bottom: 1px solid #eee;
+        }
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; cursor: pointer; }
+        nav ul { display: flex; gap: 25px; list-style: none; }
+        nav a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.85rem; transition: 0.3s; cursor: pointer; opacity: 0.7; }
+        nav a:hover { opacity: 1; color: var(--primary); }
+
+        .cart-status { background: var(--dark); color: white; padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; }
+
+        /* Hero */
+        .hero {
+            height: 50vh; background: linear-gradient(to right, rgba(15,23,42,0.8), rgba(15,23,42,0.2)), url('https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=1500&q=80') center/cover;
+            display: flex; align-items: center; padding: 0 5%; color: white;
+        }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
+        .hero-content p { font-size: 1.1rem; opacity: 0.9; }
+
+        /* Sections Styling */
+        .section-padding { padding: 80px 5%; }
+        .about-section { background: var(--light); text-align: center; }
+        .about-container { max-width: 800px; margin: 0 auto; }
+        
+        .contact-section { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .contact-form input, .contact-form textarea { 
+            width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+        }
+
+        /* Product Section */
+        .shop-section { padding: 60px 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+        
+        .filter-btn { padding: 8px 20px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-family: inherit; font-weight: 600; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
+        .filter-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+        
+        /* Size specific styling */
+        .size-btn { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; background: white; cursor: pointer; border-radius: 8px; font-weight: 600; transition: 0.2s; }
+        .size-btn.selected { background: var(--dark); color: white; border-color: var(--dark); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+
+        /* Product Card */
+        .product-card { background: #fff; border-radius: 16px; overflow: hidden; transition: 0.3s; border: 1px solid #f1f5f9; position: relative; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        
+        .img-holder { background: var(--light); aspect-ratio: 1/1; position: relative; overflow: hidden; cursor: pointer; }
+        .img-holder img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .product-card:hover .img-holder img { transform: scale(1.05); }
+
+        .info { padding: 20px; }
+        .cat { color: var(--gray); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .product-card h3 { font-size: 1.1rem; margin-bottom: 5px; font-weight: 700; }
+        
+        .rating { color: var(--accent); margin-bottom: 10px; font-size: 0.9rem; }
+        .star { cursor: pointer; transition: 0.2s; }
+
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .price { font-weight: 800; font-size: 1.2rem; }
+        
+        .add-quick-btn { 
+            background: var(--primary); color: white; border: none; padding: 10px 15px; 
+            border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.8rem;
+        }
+
+        /* Bag Section (Sidebar) */
+        #bagSidebar {
+            position: fixed; right: -400px; top: 0; width: 350px; height: 100%;
+            background: white; z-index: 3000; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            transition: 0.4s; padding: 30px; display: flex; flex-direction: column;
+        }
+        #bagSidebar.active { right: 0; }
+        .bag-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .bag-items { flex-grow: 1; overflow-y: auto; }
+        .bag-item { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+        .bag-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .qty-btn { 
+            width: 24px; height: 24px; border: 1px solid var(--dark); background: white; 
+            border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; 
+            align-items: center; justify-content: center;
+        }
+        .qty-btn:hover { background: var(--dark); color: white; }
+
+        .bag-footer { border-top: 1px solid #eee; padding-top: 20px; }
+
+        /* Modal Updates */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); z-index: 2000; overflow-y: auto; padding: 40px 5%;
+        }
+        .modal-content { 
+            max-width: 1100px; margin: 0 auto; background: white; border-radius: 24px; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 40px; position: relative;
+        }
+        .gallery-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .gallery-layout img { width: 100%; border-radius: 12px; }
+        .gallery-layout img:first-child { grid-column: span 2; }
+        
+        .close-modal { position: absolute; top: 20px; right: 30px; font-size: 2rem; cursor: pointer; z-index: 10; }
+        .buy-btn { 
+            width: 100%; padding: 18px; background: var(--dark); color: white; border: none; 
+            font-weight: 800; margin-top: 20px; cursor: pointer; border-radius: 12px; font-size: 1rem;
+        }
+
+        /* Footer */
+        footer { background: var(--dark); color: white; padding: 60px 5% 20px; text-align: center; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; text-align: left; }
+        .footer-grid h4 { margin-bottom: 20px; color: var(--primary); }
+        .footer-grid p { font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px; }
+        .copyright { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.8rem; opacity: 0.5; }
+
+        /* Receipt Overlay */
+        #receiptOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 4000; align-items: center; justify-content: center;
+        }
+        .receipt-card { background: white; padding: 40px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; font-family: 'Courier New', Courier, monospace; }
+
+        @media (max-width: 850px) {
+            .modal-content { grid-template-columns: 1fr; padding: 20px; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .contact-section { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="window.scrollTo(0,0)">SHAUN SHOES</div>
+    <nav>
+        <ul>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <button class="cart-status" onclick="toggleBag()">Bag: <span id="cart-count">0</span></button>
+</header>
+
+<div id="bagSidebar">
+    <div class="bag-header">
+        <h2>Your Bag</h2>
+        <span style="cursor:pointer; font-size: 1.5rem" onclick="toggleBag()">&times;</span>
+    </div>
+    <div class="bag-items" id="bagItemsList"></div>
+    <div class="bag-footer">
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; margin-bottom: 20px;">
+            <span>Total:</span>
+            <span id="bagTotal">$0.00</span>
+        </div>
+        <button class="buy-btn" onclick="processCheckout()">CHECKOUT NOW</button>
+    </div>
+</div>
+
+<div id="receiptOverlay">
+    <div class="receipt-card" id="receiptContent"></div>
+</div>
+
+<section class="hero">
+    <div class="hero-content">
+        <p>New Season 2026</p>
+        <h1>ENGINEERED FOR<br>THE EVERYDAY.</h1>
+    </div>
+</section>
+
+<section class="shop-section" id="shop">
+    <div class="section-header">
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+            <button class="filter-btn" onclick="filterProducts('men', this)">Men's</button>
+            <button class="filter-btn" onclick="filterProducts('women', this)">Women's</button>
+            <button class="filter-btn" onclick="filterProducts('sneakers', this)">Sneakers</button>
+            <button class="filter-btn" onclick="filterProducts('rubber', this)">Rubber Shoes</button>
+        </div>
+        <p id="product-count" style="font-weight: 600; font-size: 0.9rem; color: var(--gray);"></p>
+    </div>
+    <div class="grid-container" id="productGrid"></div>
+</section>
+
+<section class="section-padding about-section" id="about">
+    <div class="about-container">
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Our Story</h2>
+        <p style="color: var(--gray); font-size: 1.1rem;">Founded in 2026, SHAUN SHOES was born from a simple idea: premium footwear shouldn't just look good—it should feel like walking on clouds. We combine artisanal craftsmanship with modern ergonomic engineering to create shoes that support your journey, wherever it leads.</p>
+    </div>
+</section>
+
+<section class="section-padding contact-section" id="contact">
+    <div>
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Get In Touch</h2>
+        <p style="margin-bottom: 30px; color: var(--gray);">Have questions about sizing or shipping? Our team is here to help you find the perfect pair.</p>
+        <p><strong>Address:</strong> GF Century City Mall, Kalayaan ave, corner Salamanca, Makati City, Metro Manila, Philippines</p>
+        <p><strong>Email:</strong> support@shaunshoes.com</p>
+        <p><strong>Hours:</strong> Mon - Sat, 8:00am - 10:00pm</p>
+    </div>
+    <div class="contact-form">
+        <input type="text" placeholder="Your Name">
+        <input type="email" placeholder="Your Email">
+        <textarea rows="5" placeholder="How can we help?"></textarea>
+        <button class="buy-btn" style="margin-top:0">Send Message</button>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-grid">
+        <div>
+            <h4>SHAUN SHOES</h4>
+            <p>Elevating your every step with premium materials and timeless design.</p>
+        </div>
+        <div>
+            <h4>Quick Links</h4>
+            <p><a href="#shop" style="color:white; text-decoration:none">Shop All</a></p>
+            <p><a href="#about" style="color:white; text-decoration:none">Our Story</a></p>
+            <p><a href="#contact" style="color:white; text-decoration:none">Support</a></p>
+        </div>
+        <div>
+            <h4>Follow Us</h4>
+            <p>Instagram</p>
+            <p>Twitter</p>
+            <p>Facebook</p>
+        </div>
+    </div>
+    <div class="copyright">
+        &copy; 2026 SHAUN SHOES. All rights reserved.
+        <p>SALIGUE, AARON SHANE DE LEON BO3DD</p>
+    </div>
+</footer>
+
+<div id="quickView" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="gallery-layout" id="modalGallery"></div>
+        <div class="sticky-details">
+            <p id="mCat" class="cat"></p>
+            <h1 id="mTitle" style="font-size: 2rem; margin-bottom: 10px;"></h1>
+            <div class="rating" id="mRating"></div>
+            <p id="mPrice" style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 15px 0;"></p>
+            <p style="color: var(--gray); font-size: 0.95rem; margin-bottom: 30px;">
+                Premium quality build for long-lasting comfort.
+            </p>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 700; font-size: 0.8rem; display: block; margin-bottom: 10px;">SELECT SIZE</label>
+                <div style="display: flex; gap: 10px;" id="sizeSelectors">
+                    <button class="size-btn" onclick="selectSize(8, this)">8</button>
+                    <button class="size-btn" onclick="selectSize(9, this)">9</button>
+                    <button class="size-btn" onclick="selectSize(10, this)">10</button>
+                    <button class="size-btn" onclick="selectSize(11, this)">11</button>
+                </div>
+            </div>
+
+            <button class="buy-btn" onclick="addToCart(event)">ADD TO SHOPPING BAG</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const products = [
+        // MEN'S SNEAKERS (5)
+        { id: 1, name: "Men's Urban Classic", gender: "men", type: "sneakers", price: 2595.00, rating: 5, img: "Men's Urban Classic.jpg" },
+        { id: 2, name: "Men's Street Vibe", gender: "men", type: "sneakers", price: 3495.00, rating: 4, img: "Men's Street Vibe.jpg" },
+        { id: 3, name: "Men's Retro Low", gender: "men", type: "sneakers", price: 3295.00, rating: 5, img: "Men's Retro Low.jpg" },
+        { id: 4, name: "Men's Cloud Knit", gender: "men", type: "sneakers", price: 2995.00, rating: 5, img: "Men's Cloud Knit.jpg" },
+        { id: 5, name: "Men's Canvas Elite", gender: "men", type: "sneakers", price: 2795.00, rating: 4, img: "Men's Canvas Elite.jpg" },
+
+        // MEN'S RUBBER SHOES (5)
+        { id: 6, name: "Men's Alpha Runner", gender: "men", type: "rubber", price: 3195.00, rating: 5, img: "Men's Alpha Runner.jpg" },
+        { id: 7, name: "Men's Trail Grip", gender: "men", type: "rubber", price: 3995.00, rating: 4, img: "Men's Trail Grip.jpg" },
+        { id: 8, name: "Men's Gym Pro", gender: "men", type: "rubber", price: 3395.00, rating: 5, img: "Men's Gym Pro.jpg" },
+        { id: 9, name: "Men's Speed Bolt", gender: "men", type: "rubber", price: 3495.00, rating: 5, img: "Men's Speed Bolt.jpg" },
+        { id: 10, name: "Men's Flex Trainer", gender: "men", type: "rubber", price: 2995.00, rating: 4, img: "Men's Flex Trainer.jpg" },
+
+        // WOMEN'S SNEAKERS (5)
+        { id: 11, name: "Women's Pastel Dream", gender: "women", type: "sneakers", price: 3495.00, rating: 5, img: "Women's Pastel Dream.jpg" },
+        { id: 12, name: "Women's Court Star", gender: "women", type: "sneakers", price: 3295.00, rating: 4, img: "Women's Court Star.jpg" },
+        { id: 13, name: "Women's Sleek White", gender: "women", type: "sneakers", price: 2995.00, rating: 5, img: "Women's Sleek White.jpg" },
+        { id: 14, name: "Women's Boho Canvas", gender: "women", type: "sneakers", price: 2795.00, rating: 4, img: "Women's Boho Canvas.jpg" },
+        { id: 15, name: "Women's Platform Lux", gender: "women", type: "sneakers", price: 3995.00, rating: 5, img: "Women's Platform Lux.jpg" },
+
+        // WOMEN'S RUBBER SHOES (5)
+        { id: 16, name: "Women's Zen Runner", gender: "women", type: "rubber", price: 2495.00, rating: 5, img: "Women's Zen Runner.jpg" },
+        { id: 17, name: "Women's Aero Sport", gender: "women", type: "rubber", price: 3195.00, rating: 5, img: "Women's Aero Sport.jpg" },
+        { id: 18, name: "Women's Peak Cushion", gender: "women", type: "rubber", price: 2695.00, rating: 4, img: "Women's Peak Cushion.jpg" },
+        { id: 19, name: "Women's Kinetic Glow", gender: "women", type: "rubber", price: 3395.00, rating: 5, img: "Women's Kinetic Glow.jpg" },
+        { id: 20, name: "Women's Lite Walker", gender: "women", type: "rubber", price: 2195.00, rating: 4, img: "Women's Lite Walker.jpg" }
+    ];
+
+    let cart = [];
+    let selectedSize = null;
+    let activeProductId = null;
+
+    function renderGrid(filter = 'all') {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = '';
+        
+        let filtered;
+        if (filter === 'all') filtered = products;
+        else if (filter === 'men' || filter === 'women') filtered = products.filter(p => p.gender === filter);
+        else if (filter === 'sneakers' || filter === 'rubber') filtered = products.filter(p => p.type === filter);
+        
+        document.getElementById('product-count').innerText = `${filtered.length} Products Found`;
+
+        filtered.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <div class="img-holder" onclick="openQuickView(${p.id})">
+                        <img src="${p.img}">
+                    </div>
+                    <div class="info">
+                        <p class="cat">${p.gender} | ${p.type}</p>
+                        <h3>${p.name}</h3>
+                        <div class="rating">${getStars(p.rating)}</div>
+                        <div class="price-row">
+                            <p class="price">₱${p.price.toFixed(2)}</p>
+                            <button class="add-quick-btn" onclick="openQuickView(${p.id})">Select Size</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function addToCart(e) {
+        if(!selectedSize) return alert("Please select a size first!");
+        const product = products.find(p => p.id === activeProductId);
+        
+        const existingItem = cart.find(item => item.id === product.id && item.size === selectedSize);
+        if (existingItem) {
+            existingItem.qty += 1;
+        } else {
+            cart.push({ ...product, size: selectedSize, qty: 1 });
+        }
+
+        updateBagUI();
+        const btn = e.target;
+        btn.innerText = "✓ ADDED TO BAG";
+        btn.style.background = "#22c55e";
+        setTimeout(() => {
+            btn.innerText = "ADD TO SHOPPING BAG";
+            btn.style.background = "";
+            closeModal();
+        }, 600);
+    }
+
+    function changeQty(id, size, delta) {
+        const item = cart.find(i => i.id === id && i.size === size);
+        if (item) {
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => !(i.id === id && i.size === size));
+            }
+            updateBagUI();
+        }
+    }
+
+    function updateBagUI() {
+        const list = document.getElementById('bagItemsList');
+        let totalCount = 0;
+        let totalPrice = 0;
+        list.innerHTML = '';
+
+        cart.forEach(item => {
+            totalCount += item.qty;
+            totalPrice += (item.price * item.qty);
+            list.innerHTML += `
+                <div class="bag-item">
+                    <img src="${item.img}">
+                    <div style="flex:1">
+                        <h4 style="font-size:0.9rem">${item.name}</h4>
+                        <p style="font-size:0.8rem; color: var(--gray)">Size: ${item.size}</p>
+                        <p style="font-weight:700">₱${(item.price * item.qty).toFixed(2)}</p>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="changeQty(${item.id}, ${item.size}, -1)">-</button>
+                            <span style="font-weight:bold">${item.qty}</span>
+                            <button class="qty-btn" onclick="changeQty(${item.id}, ${item.size}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('cart-count').innerText = totalCount;
+        document.getElementById('bagTotal').innerText = `₱${totalPrice.toFixed(2)}`;
+    }
+
+    function processCheckout() {
+        if(cart.length === 0) return alert("Bag is empty!");
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        let itemsHtml = cart.map(item => `<div>${item.qty}x ${item.name} (Size ${item.size}) - ₱${(item.price * item.qty).toFixed(2)}</div>`).join('');
+        
+        document.getElementById('receiptContent').innerHTML = `
+            <h3>SHAUN SHOES</h3>
+            <p>Order Receipt - 2026</p>
+            <hr style="margin:15px 0; border: 1px dashed #ccc">
+            ${itemsHtml}
+            <hr style="margin:15px 0; border: 1px dashed #ccc">
+            <h2 style="margin-bottom:20px">Total: ₱${total.toFixed(2)}</h2>
+            <p>Thank you for your purchase!</p>
+            <button class="buy-btn" onclick="location.reload()">New Order</button>
+        `;
+        document.getElementById('receiptOverlay').style.display = 'flex';
+    }
+
+    function getStars(count) {
+        let stars = '';
+        for(let i=0; i<5; i++) stars += `<span class="star">${i < count ? '★' : '☆'}</span>`;
+        return stars;
+    }
+    function selectSize(size, btn) {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedSize = size;
+    }
+    function openQuickView(id) {
+        const product = products.find(p => p.id === id);
+        activeProductId = id;
+        selectedSize = null; 
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('mTitle').innerText = product.name;
+        document.getElementById('mCat').innerText = (product.gender + " | " + product.type).toUpperCase();
+        document.getElementById('mPrice').innerText = `₱${product.price.toFixed(2)}`;
+        document.getElementById('mRating').innerHTML = getStars(product.rating);
+        document.getElementById('modalGallery').innerHTML = `<img src="${product.img}"><img src="${product.img}"><img src="${product.img}">`;
+        document.getElementById('quickView').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('quickView').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    function toggleBag() {
+        document.getElementById('bagSidebar').classList.toggle('active');
+    }
+    function filterProducts(type, btn) {
+        if(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        renderGrid(type);
+    }
+    window.onclick = (e) => { if (e.target == document.getElementById('quickView')) closeModal(); }
+    renderGrid();
+</script>
+
+</body>
+</html>
